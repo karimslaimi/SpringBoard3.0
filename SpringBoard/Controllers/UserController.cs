@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SpringBoard.API.Model;
@@ -12,6 +13,7 @@ namespace SpringBoard.API.Controllers
    
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private IServiceUser serviceUser;
@@ -36,7 +38,7 @@ namespace SpringBoard.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> updateProfile([FromBody] RegisterModel profile)
+        public async Task<IActionResult> updateProfile([FromBody] ProfileModel profile)
         {
             if (!profile.valid())
             {
@@ -48,6 +50,7 @@ namespace SpringBoard.API.Controllers
         }
 
 
+        [Authorize(Roles ="Administration")]
         [HttpGet]
         [Route("/listCommercial")]
         public async Task<IActionResult> listCommercial()
@@ -55,14 +58,15 @@ namespace SpringBoard.API.Controllers
             return Ok(await this.serviceUser.listCommercial());
         }
 
+        [Authorize(Roles = "Administration, Commercial")]
         [HttpGet]
         [Route("/listConsultant")]
         public async Task<IActionResult> listConsultant()
         {
             return Ok(await this.serviceUser.listConsultant());
-        } 
-        
-        
+        }
+
+        [Authorize(Roles = "Administration")]
         [HttpGet]
         [Route("/listRH")]
         public async Task<IActionResult> listRH()
@@ -70,8 +74,8 @@ namespace SpringBoard.API.Controllers
             return Ok(await this.serviceUser.listGestionnaireRH());
         } 
         
+
         [HttpGet]
-       
         public async Task<IActionResult> filter(string filter)
         {
             var result = await serviceUser.Search(filter);
@@ -79,7 +83,7 @@ namespace SpringBoard.API.Controllers
         }
 
 
-
+        [Authorize(Roles = "Administration")]
         [HttpDelete]
         public async Task<IActionResult> deleteUser(string userid)
         {
@@ -93,7 +97,7 @@ namespace SpringBoard.API.Controllers
                 return Ok("Error occured try disabling the account");
             }
         }
-
+        [Authorize(Roles = "Administration")]
         [HttpDelete]
         public async Task<IActionResult> lockOutUser(string userid)
         {

@@ -1,7 +1,12 @@
-﻿using SpringBoard.Data.Infrastructure;
+﻿using Microsoft.Extensions.Configuration;
+using SpringBoard.Data.Infrastructure;
 using SpringBoard.Domaine;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SpringBoard.Service
@@ -123,8 +128,63 @@ namespace SpringBoard.Service
             cr.validation = new DateTime();
             utwk.RepositoryCompteRendu.update(cr);
             utwk.Commit();
+            sendMail("Votre compte rendu créé le " + cr.date + " a été validé", "Compte rendu validé", cr.Consultant.Email);
             return cr;
 
+        }
+
+        public string sendMail(string mail, string obj, string body)
+        {
+            try
+            {
+                 IConfiguration conf = (new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build());
+
+                string sendermail = conf["SenderMail"].ToString();
+                string senderpassword = conf["SenderPassword"].ToString();
+
+                SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
+                client.EnableSsl = true;
+                client.Timeout = 1000000;
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.UseDefaultCredentials = false;
+                string from = sendermail;
+
+                MailMessage mailMessage = new MailMessage(from, mail);
+
+
+
+                mailMessage.Subject = obj;
+                mailMessage.Body = body;
+
+                client.Credentials = new NetworkCredential(sendermail, senderpassword);
+
+                mailMessage.IsBodyHtml = true;
+
+                mailMessage.BodyEncoding = UTF8Encoding.UTF8;
+
+                client.Send(mailMessage);
+
+            }
+            catch (Exception e)
+            {
+
+                return  "error occured";
+
+            }
+            return "success";
+        
+        }
+
+        public async Task<IEnumerable<CompteRendu>> getCRByCommercial(string userid)
+        {
+            IEnumerable<CompteRendu> compteRendus = await utwk.RepositoryCompteRendu.getMany(x => x.Consultant.commid == userid);
+
+            foreach (CompteRendu cr in compteRendus)
+            {
+                cr.Rapports = (ICollection<Rapport>)await utwk.RepositoryRapport.getMany(x => x.CompteRendu.id == cr.id);
+            }
+
+            return compteRendus;
         }
     }
 }

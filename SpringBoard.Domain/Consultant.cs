@@ -8,6 +8,7 @@ namespace SpringBoard.Domaine
 {
     public class Consultant:Utilisateur
     {
+        public string commid { get; set; }
         public string competence { get; set; }//json type
         public virtual List<CompteRendu> CompteRendus { get; set; }
     }

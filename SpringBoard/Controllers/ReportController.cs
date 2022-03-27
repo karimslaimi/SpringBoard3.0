@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SpringBoard.Service;
 using System;
@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace SpringBoard.API.Controllers
 {
+
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class ReportController : ControllerBase
     {
 
@@ -22,7 +24,7 @@ namespace SpringBoard.API.Controllers
 
 
         [HttpPost]
-
+        [Authorize(Roles ="Consultant")]
         public async Task<IActionResult> addRepport(string date,double valeur, string userid)
         {
             if(string.IsNullOrWhiteSpace(date) || string.IsNullOrWhiteSpace(userid))
@@ -100,7 +102,11 @@ namespace SpringBoard.API.Controllers
             return Ok(await serviceCompteRendu.GetCRbyDateAndUser(oDate, userId));
 
         }
+
+
         [HttpPut]
+        [Authorize(Roles = "Administrateur, Commercial")]
+
         public async Task<IActionResult> validate(int id)
         {
             var result = await serviceCompteRendu.validateCR(id);
@@ -115,6 +121,8 @@ namespace SpringBoard.API.Controllers
 
         }
 
+
+        [Authorize(Roles = "Administrateur, Commercial")]
         [HttpPut]
         public async Task<IActionResult> unlock(int id)
         {
@@ -129,7 +137,7 @@ namespace SpringBoard.API.Controllers
             }
 
         }
-
+        [Authorize(Roles = "Administrateur, Commercial")]
         [HttpDelete]
         public async Task<IActionResult> delete(int id)
         {
