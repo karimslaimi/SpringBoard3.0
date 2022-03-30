@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SpringBoard.Service
 {
-    public interface IServiceCompteRendu:IService<CompteRendu>
+    public interface IServiceCompteRendu
     {
         public Task<Rapport> addRapportToCR(DateTime date, double value,string userId);
         public Task<CompteRendu> GetCRbyDateAndUser(DateTime date, string userId);
@@ -17,7 +17,6 @@ namespace SpringBoard.Service
         public Task<CompteRendu> unlockCR(int crid);
         public Task<bool> delete(int cr);
         public Task<IEnumerable<CompteRendu>> getCRByCommercial(string userid);
-        public string sendMail(string mail, string obj, string body);
 
 
     }

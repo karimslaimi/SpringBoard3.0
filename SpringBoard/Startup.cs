@@ -79,10 +79,13 @@ namespace SpringBoard
                     options.SignIn.RequireConfirmedEmail = false;
                     options.SignIn.RequireConfirmedPhoneNumber = false;
                 });
-                // Adding Authentication  
+
+            services.Configure<DataProtectionTokenProviderOptions>(opt =>
+                    opt.TokenLifespan = TimeSpan.FromHours(2));
+            // Adding Authentication  
 
 
-                services.AddAuthentication(options =>
+            services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -107,6 +110,8 @@ namespace SpringBoard
 
 
                 services.AddScoped<IServiceUser, ServiceUser>();
+                services.AddScoped<IServiceCompteRendu, ServiceCompteRendu>();
+                services.AddScoped<IServiceMail, ServiceMail>();
 
             }
 

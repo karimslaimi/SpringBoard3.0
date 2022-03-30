@@ -11,13 +11,17 @@ using System.Threading.Tasks;
 
 namespace SpringBoard.Service
 {
-    public class ServiceCompteRendu : Service<CompteRendu>, IServiceCompteRendu
+    public class ServiceCompteRendu : IServiceCompteRendu
     {
-        static IDatabaseFactory dbf = new DatabaseFactory();
-        static IUnitOfWork utwk = new UnitOfWork(dbf);
+        static IDatabaseFactory dbf = null;
+        static IUnitOfWork utwk = null;
+        private IServiceMail ServiceMail;
 
-        protected ServiceCompteRendu() : base(utwk)
+        public ServiceCompteRendu( IServiceMail _serviceMail)
         {
+            dbf = new DatabaseFactory();
+            utwk = new UnitOfWork(dbf);
+            this.ServiceMail = _serviceMail;
         }
 
 
@@ -128,52 +132,12 @@ namespace SpringBoard.Service
             cr.validation = new DateTime();
             utwk.RepositoryCompteRendu.update(cr);
             utwk.Commit();
-            sendMail("Votre compte rendu créé le " + cr.date + " a été validé", "Compte rendu validé", cr.Consultant.Email);
+            ServiceMail.sendMail("Votre compte rendu créé le " + cr.date + " a été validé", "Compte rendu validé", cr.Consultant.Email);
             return cr;
 
         }
 
-        public string sendMail(string mail, string obj, string body)
-        {
-            try
-            {
-                 IConfiguration conf = (new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build());
-
-                string sendermail = conf["SenderMail"].ToString();
-                string senderpassword = conf["SenderPassword"].ToString();
-
-                SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
-                client.EnableSsl = true;
-                client.Timeout = 1000000;
-                client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                client.UseDefaultCredentials = false;
-                string from = sendermail;
-
-                MailMessage mailMessage = new MailMessage(from, mail);
-
-
-
-                mailMessage.Subject = obj;
-                mailMessage.Body = body;
-
-                client.Credentials = new NetworkCredential(sendermail, senderpassword);
-
-                mailMessage.IsBodyHtml = true;
-
-                mailMessage.BodyEncoding = UTF8Encoding.UTF8;
-
-                client.Send(mailMessage);
-
-            }
-            catch (Exception e)
-            {
-
-                return  "error occured";
-
-            }
-            return "success";
-        
-        }
+       
 
         public async Task<IEnumerable<CompteRendu>> getCRByCommercial(string userid)
         {
