@@ -35,6 +35,7 @@ namespace SpringBoard
 
             services.AddSwaggerGen(setup =>
             {
+                setup.EnableAnnotations();
                 // Include 'SecurityScheme' to use JWT Authentication
                 var jwtSecurityScheme = new OpenApiSecurityScheme
                 {
@@ -54,10 +55,7 @@ namespace SpringBoard
 
                 setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
 
-                setup.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        { jwtSecurityScheme, Array.Empty<string>() }
-    });
+                setup.AddSecurityRequirement(new OpenApiSecurityRequirement {{ jwtSecurityScheme, Array.Empty<string>() } });
 
             });
 

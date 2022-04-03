@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SpringBoard.Model;
 using SpringBoard.Service;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Threading.Tasks;
 
@@ -23,8 +25,8 @@ namespace SpringBoard.API.Controllers
         }
 
 
+        [SwaggerOperation(Summary ="Add a new report",Description ="this methode to add a report please be carefull the date format must be dd-MM-yyyy")]
         [HttpPost]
-        [Authorize(Roles ="Consultant")]
         public async Task<IActionResult> addRepport(string date,double valeur, string userid)
         {
             if(string.IsNullOrWhiteSpace(date) || string.IsNullOrWhiteSpace(userid))
@@ -42,8 +44,11 @@ namespace SpringBoard.API.Controllers
                 return BadRequest("date format is incorrect (must be dd-MM-yyyy ex: 18-05-2022");
             }
 
+            ReportModel model = new ReportModel();
+            //map the result into the model so we can avoid the circular reference exception
+            model = model.Mapper(await serviceCompteRendu.addRapportToCR(oDate, valeur, userid));
 
-            return  Ok(await serviceCompteRendu.addRapportToCR(oDate, valeur, userid));
+            return  Ok(model);
         }
 
         [HttpGet]
@@ -105,7 +110,6 @@ namespace SpringBoard.API.Controllers
 
 
         [HttpPut]
-        [Authorize(Roles = "Administrateur, Commercial")]
 
         public async Task<IActionResult> validate(int id)
         {
@@ -122,7 +126,7 @@ namespace SpringBoard.API.Controllers
         }
 
 
-        [Authorize(Roles = "Administrateur, Commercial")]
+        //[Authorize(Roles = "Administrateur, Commercial")]
         [HttpPut]
         public async Task<IActionResult> unlock(int id)
         {
@@ -137,7 +141,8 @@ namespace SpringBoard.API.Controllers
             }
 
         }
-        [Authorize(Roles = "Administrateur, Commercial")]
+
+       // [Authorize(Roles = "Administrateur, Commercial")]
         [HttpDelete]
         public async Task<IActionResult> delete(int id)
         {
