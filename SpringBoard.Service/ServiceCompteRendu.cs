@@ -23,7 +23,7 @@ namespace SpringBoard.Service
             utwk = new UnitOfWork(dbf);
             this.ServiceMail = _serviceMail;
         }
-
+        //TODO create a mapper for all entities
 
         public async Task<Rapport> addRapportToCR(DateTime date, double value, string userId)
         {
@@ -34,7 +34,7 @@ namespace SpringBoard.Service
             {
                 cr = new CompteRendu();
                 cr.Consultant = await utwk.getRepository<Consultant>().Get(x => x.Id == userId);
-                cr.date = new DateTime();
+                cr.date = DateTime.UtcNow;
                 cr.statut = false;
                 await utwk.RepositoryCompteRendu.Add(cr);
                 utwk.Commit();
@@ -129,7 +129,7 @@ namespace SpringBoard.Service
             }
 
             cr.statut = true;
-            cr.validation = new DateTime();
+            cr.validation = DateTime.UtcNow; ;
             utwk.RepositoryCompteRendu.update(cr);
             utwk.Commit();
             ServiceMail.sendMail("Votre compte rendu créé le " + cr.date + " a été validé", "Compte rendu validé", cr.Consultant.Email);

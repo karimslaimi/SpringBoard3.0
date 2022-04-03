@@ -51,6 +51,7 @@ namespace SpringBoard.API.Controllers
             return  Ok(model);
         }
 
+        [SwaggerOperation(Summary = "get report by date", Description = "this methode to search reports(compte rendu) by date please be carefull the date format must be dd-MM-yyyy")]
         [HttpGet]
         public async Task<IActionResult> getReportByDate(string date)
         {
@@ -77,11 +78,17 @@ namespace SpringBoard.API.Controllers
 
         }
 
+
+        [SwaggerOperation(Summary = "get report by user", Description = "this methode to search reports(compte rendu) by user id ")]
+
         [HttpGet]
         public async Task<IActionResult> getUserReport(string userId)
         {
             return Ok(await serviceCompteRendu.getUserCR(userId));
         }
+
+
+        [SwaggerOperation(Summary = "get report by user and date", Description = "this methode to search reports(compte rendu) by user id date please be carefull the date format must be dd-MM-yyyy")]
 
         [HttpGet]
         public async Task<IActionResult> getReportByUserAndDate(string date, string userId)
@@ -109,8 +116,9 @@ namespace SpringBoard.API.Controllers
         }
 
 
-        [HttpPut]
+        [SwaggerOperation(Summary = "validate report", Description = "this methode to validate reports(compte rendu) ")]
 
+        [HttpPut]
         public async Task<IActionResult> validate(int id)
         {
             var result = await serviceCompteRendu.validateCR(id);
@@ -124,6 +132,7 @@ namespace SpringBoard.API.Controllers
             }
 
         }
+        [SwaggerOperation(Summary = "unlock report", Description = "when the report(compte rendu) is validated then it will be locked and can't be updated this method to unlock it")]
 
 
         //[Authorize(Roles = "Administrateur, Commercial")]
@@ -141,8 +150,10 @@ namespace SpringBoard.API.Controllers
             }
 
         }
+        [SwaggerOperation(Summary = "delete report", Description = "Attention when deleting a report it can't be undone")]
 
-       // [Authorize(Roles = "Administrateur, Commercial")]
+
+        // [Authorize(Roles = "Administrateur, Commercial")]
         [HttpDelete]
         public async Task<IActionResult> delete(int id)
         {

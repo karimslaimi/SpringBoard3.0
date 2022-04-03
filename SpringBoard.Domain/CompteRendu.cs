@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SpringBoard.Domaine
@@ -18,6 +19,7 @@ namespace SpringBoard.Domaine
 
         public DateTime date { get; set; }
 
+        [JsonIgnore]
         public ICollection<Rapport> Rapports { get; set; }
 
 
