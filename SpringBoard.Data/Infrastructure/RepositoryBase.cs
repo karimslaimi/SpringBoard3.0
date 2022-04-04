@@ -30,9 +30,21 @@ namespace SpringBoard.Data.Infrastructure
         }
 
 
-        public virtual async Task<T> Get(Expression<Func<T, bool>> where)
+        public virtual async Task<T> Get(Expression<Func<T, bool>> where, string includeProperties = "")
         {
-            return await dbset.Where(where).FirstOrDefaultAsync();
+            IQueryable<T> query = dbset;
+
+            if (where != null)
+            {
+                query = query.Where(where);
+            }
+
+            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            return await query.FirstOrDefaultAsync();
         }
 
         public virtual async Task<IEnumerable<T>> getAll()
@@ -72,9 +84,22 @@ namespace SpringBoard.Data.Infrastructure
             return entity;
         }
 
-        public virtual async Task<IEnumerable<T>> getMany(Expression<Func<T, bool>> predicate)
+        public virtual async Task<IEnumerable<T>> getMany(Expression<Func<T, bool>> predicate = null,  string includeProperties = "")
         {
-            return await dbset.Where(predicate).ToListAsync();
+            IQueryable<T> query = dbset;
+
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+
+            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+
+            return await query.ToListAsync();
         }
     }
 }

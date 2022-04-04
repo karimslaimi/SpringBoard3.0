@@ -19,7 +19,7 @@ namespace SpringBoard.Domaine
 
         public DateTime date { get; set; }
 
-        [JsonIgnore]
+ 
         public ICollection<Rapport> Rapports { get; set; }
 
 

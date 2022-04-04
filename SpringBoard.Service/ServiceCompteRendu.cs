@@ -74,33 +74,25 @@ namespace SpringBoard.Service
 
         public async Task<CompteRendu> GetCRbyDateAndUser(DateTime date, string userId)
         {
-            CompteRendu compteRendu = await utwk.RepositoryCompteRendu.Get(x => x.date.Month == date.Month && x.Consultant.Id == userId);
-            compteRendu.Rapports = (ICollection<Rapport>)await utwk.RepositoryRapport.getMany(x => x.CompteRendu.id == compteRendu.id);
-            return compteRendu;
+            return  await utwk.RepositoryCompteRendu.Get(x => x.date.Month == date.Month && x.Consultant.Id == userId, "Consultant,Rapports");
 
 
         }
 
         public async Task<IEnumerable<CompteRendu>> getCRbyDate(DateTime date)
         {
-            IEnumerable<CompteRendu> compteRendus = await utwk.RepositoryCompteRendu.getMany(x => x.date.Month == date.Month);
+            IEnumerable<CompteRendu> compteRendus = await utwk.RepositoryCompteRendu.getMany(x => x.date.Month == date.Month,"Consultant,Rapports");
 
-            foreach (CompteRendu cr in compteRendus)
-            {
-                cr.Rapports = (ICollection<Rapport>)await utwk.RepositoryRapport.getMany(x => x.CompteRendu.id == cr.id);
-            }
+         
 
             return compteRendus;
         }
 
         public async Task<IEnumerable<CompteRendu>> getUserCR(string userID)
         {
-            IEnumerable<CompteRendu> compteRendus = await utwk.RepositoryCompteRendu.getMany(x => x.Consultant.Id == userID);
+            IEnumerable<CompteRendu> compteRendus = await utwk.RepositoryCompteRendu.getMany(x => x.Consultant.Id == userID, "Consultant,Rapports");
 
-            foreach (CompteRendu cr in compteRendus)
-            {
-                cr.Rapports = (ICollection<Rapport>)await utwk.RepositoryRapport.getMany(x => x.CompteRendu.id == cr.id);
-            }
+         
 
             return compteRendus;
         }
@@ -141,12 +133,9 @@ namespace SpringBoard.Service
 
         public async Task<IEnumerable<CompteRendu>> getCRByCommercial(string userid)
         {
-            IEnumerable<CompteRendu> compteRendus = await utwk.RepositoryCompteRendu.getMany(x => x.Consultant.commid == userid);
+            IEnumerable<CompteRendu> compteRendus = await utwk.RepositoryCompteRendu.getMany(x => x.Consultant.commid == userid, "Consultant,Rapports");
 
-            foreach (CompteRendu cr in compteRendus)
-            {
-                cr.Rapports = (ICollection<Rapport>)await utwk.RepositoryRapport.getMany(x => x.CompteRendu.id == cr.id);
-            }
+          
 
             return compteRendus;
         }

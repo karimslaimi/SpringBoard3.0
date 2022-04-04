@@ -14,7 +14,7 @@ namespace SpringBoard.Data.Infrastructure
 
 
 
-        Task<T> Get(Expression<Func<T, bool>> where);
+        Task<T> Get(Expression<Func<T, bool>> where, string includeProperties = "");
 
         Task<IEnumerable<T>> getAll();
         Task<T> GetById(int id);
@@ -22,7 +22,7 @@ namespace SpringBoard.Data.Infrastructure
         Task<bool> Delete(Expression<Func<T, bool>> where);
         bool Delete(T entity);
         T update(T entity);
-        Task<IEnumerable<T>> getMany(Expression<Func<T, bool>> predicate);
+        Task<IEnumerable<T>> getMany(Expression<Func<T, bool>> predicate, string includeProperties = "");
 
 
     }
